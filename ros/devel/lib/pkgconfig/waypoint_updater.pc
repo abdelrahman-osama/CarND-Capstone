@@ -1,0 +1,8 @@
+prefix=/home/pc2/Documents/CarND-Capstone/ros/devel
+
+Name: waypoint_updater
+Description: Description of waypoint_updater
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pc2/Documents/CarND-Capstone/ros/devel/lib 
+Requires: 
