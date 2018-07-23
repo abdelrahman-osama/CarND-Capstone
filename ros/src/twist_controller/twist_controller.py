@@ -29,7 +29,7 @@ class Controller(object):
         # Initialise speed PID, with tuning parameters
         # Will use this PID for the speed control
         self.pid_accel = PID(11.2, 0.05, 0.3, self.decel_limit, self.accel_limit) #TODO need to be tested
-        self.pid_steer = PID(0.8, 0.05, 0.2, -self.max_steer_angle/2, self.max_steer_angle/2) #TODO need to be tested
+        self.pid_steer = PID(0.8, 0.05, 0.2, -self.max_steer_angle, self.max_steer_angle) #TODO need to be tested
         # second controller to get throttle signal between 0 and 1
         self.pid_throttle = PID(0.4, 0.05, 0.0, 0.0, 0.75) #TODO make sure you will need this controller
 

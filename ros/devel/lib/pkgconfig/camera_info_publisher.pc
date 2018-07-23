@@ -1,8 +1,8 @@
-prefix=/home/pc1/CarND-Capstone-H/ros/devel
+prefix=/home/pc1/CarND-Capstone-HNEW/ros/devel
 
 Name: camera_info_publisher
 Description: Description of camera_info_publisher
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/pc1/CarND-Capstone-H/ros/devel/lib 
+Libs: -L/home/pc1/CarND-Capstone-HNEW/ros/devel/lib 
 Requires: 

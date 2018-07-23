@@ -23,8 +23,8 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 100 # Number of waypoints we will publish. You can change this number
-
+LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+MAX_DECEL = .5
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -42,6 +42,7 @@ class WaypointUpdater(object):
         # TODO: Add other member variables you need below
         self.currpos = None
         self.waypoints = None
+        self.stopline_wp_idx = -1
 
         rate = rospy.Rate(10) # 10hz
         while not rospy.is_shutdown():
@@ -71,7 +72,7 @@ class WaypointUpdater(object):
 
             x = self.currpos.position.x
             y = self.currpos.position.y
-
+       # pass
             for i in range(0, len(self.waypoints)):
                 map_x = self.waypoints[i].pose.pose.position.x
                 map_y = self.waypoints[i].pose.pose.position.y
@@ -100,19 +101,35 @@ class WaypointUpdater(object):
             else:
                 final = self.waypoints[start : start+LOOKAHEAD_WPS]
 
-
             l= Lane()
-            l.waypoints = final
+            if(self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= start+LOOKAHEAD_WPS)):
+                l.waypoints = final
+            else:
+                l.waypoints = self.decelerate_waypoints(final, start)
             l.header.stamp = rospy.Time(0)
             self.final_waypoints_pub.publish(l)
         
 
    
         
+    def decelerate_waypoints(self, waypoints, closest_idx):
+        temp = []
+        for i, wp in enumerate(waypoints):
+            p = Waypoint()
+            p.pose = wp.pose
+            stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
+            dist = self.distance(waypoints, i, stop_idx)
+            vel = math.sqrt(2*MAX_DECEL * dist)
+            if vel < 1.:
+                vel = 0.
+            p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
+            temp.append(p)
+        return temp
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
-        pass
+        self.stopline_wp_idx = msg.data
+        
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
